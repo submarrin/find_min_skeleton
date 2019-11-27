@@ -16,25 +16,32 @@ def read_graph():
     file_in.close()
     return graph_matrix
 
+
 print(read_graph())
 
 
-def sort_ribs(matr):
-    def get_third(item):
-        item[2]
-    make_ribs = []
+def get_ribs(matr):
+    ribs = []
     n = len(matr)
     for i in range(0, n):
         for j in range(0, n):
             if matr[i][j] is not None:
-                make_ribs.append({i, j, matr[i][j]})
-    return sorted(make_ribs, key=get_third)
+                ribs.append([i, j, matr[i][j]])
+    return ribs
+
+
+def sort_ribs(ribs):
+    def get_weight(item):
+        return item[2]
+    return sorted(ribs, key=get_weight)
 
 
 def merge_components(graph_matrix, v, w, p_name, q_name):
-    name, next_comp, size = []*len(graph_matrix)
+    n = len(graph_matrix)
+    name, next_comp, size = [None] * n, [None] * n, [None] * n
     name[v] = p_name
     u = next_comp[v]
+    print(name, next_comp, size)
     while name[u] != p_name:
         name[u] = p_name
         u = next_comp[u]
@@ -47,9 +54,9 @@ def merge_components(graph_matrix, v, w, p_name, q_name):
 
 def find_skeleton(graph_matrix):
     n = len(graph_matrix)
-    name, next_comp, size = []*len(graph_matrix)
-    queue_ribs = []
-    queue_ribs = sort_ribs(graph_matrix)
+    name, next_comp, size = [None]*n, [None]*n, [None]*n
+    queue_ribs = get_ribs(graph_matrix)
+    queue_ribs = sort_ribs(queue_ribs)
     for i in range(n):
         name[i] = i
         next_comp[i] = i
@@ -66,4 +73,7 @@ def find_skeleton(graph_matrix):
                 merge_components(graph_matrix, w, v, q_name, p_name)
             else:
                 merge_components(graph_matrix, v, w, p_name, q_name)
+
+
+print(find_skeleton(read_graph()))
 
