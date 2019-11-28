@@ -73,7 +73,7 @@ def find_skeleton(graph_matrix):
         w = loc_rib[1]
         p_name = name[v]
         q_name = name[w]
-        print("p = ", p_name, "q = ", q_name)
+        #print("p = ", p_name, "q = ", q_name)
         if p_name != q_name:
             if size[p_name] > size[q_name]:
                 name, next_comp, size = merge_components(w, v, q_name, p_name, name, next_comp, size)
@@ -95,15 +95,60 @@ def get_skeleton_and_weight(skeleton_with_weights):
 #print(get_skeleton_and_weight([[1,2,0], [0,1,5], [2,3,25]]))
 
 
-#def get_lists_from_ribs(skeleton):
+def get_matr_from_ribs(skeleton, n):
+    matr = [None] * n
+    for j in range(n):
+        matr[j] = [None] * n
+    for rib in skeleton:
+        i = rib[0]
+        j = rib[1]
+        matr[i][j] = 1
+        matr[j][i] = 1
+    return matr
 
 
+def get_lists_from_matr(matr):
+    n = len(matr)
+    lists = []
+    for i in range(0,n):
+        list_for_vertix = []
+        for j in range(0,n):
+            if matr[i][j] is not None:
+                list_for_vertix.append(j+1)
+        lists.append(list_for_vertix)
+    return lists
 
 
-# def write_in_file(skeleton, weight):
-#     file_out = open("file_out.txt")
-#
+#print(get_lists_from_matr([[None, 1, None, None], [1, None, 1, None], [None, 1, None, 1], [None, None, 1, None]]))
 
 
+def write_in_file(lists, weight):
+    file_out = open("file_out.txt", 'w')
+    for list_of_elements in lists:
+        for element in list_of_elements:
+            file_out.write(str(element))
+            file_out.write(' ')
+        file_out.write("0")
+        file_out.write('\n')
+    file_out.write(str(weight))
+    file_out.close()
+    return
 
-print(find_skeleton(read_graph()))
+
+def main():
+    graph_matrix = read_graph()
+    n = len(graph_matrix)
+    skeleton_with_weights = find_skeleton(graph_matrix)
+    print("found skeleton ribs with weight")
+    skeleton, weight = get_skeleton_and_weight(skeleton_with_weights)
+    matr_of_skeleton = get_matr_from_ribs(skeleton, n)
+    lists_of_skeleton = get_lists_from_matr(matr_of_skeleton)
+    print("lists_of_skeleton", lists_of_skeleton)
+    write_in_file(lists_of_skeleton, weight)
+    return
+
+
+main()
+
+
+#print(find_skeleton(read_graph()))
